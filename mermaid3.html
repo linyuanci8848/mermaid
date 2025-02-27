@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown Viewer</title>
+    <script src="js/marked.min.js"></script>
+    <script src="js/mermaid.min.js"></script>
+</head>
+<body>
+    <div id="content">123</div>
+    <script>
+        mermaid.initialize({
+  logLevel: "error", // [1]
+  securityLevel: "loose", // [2]
+  theme: (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ?
+    "dark" :
+    "default" // [3]
+})
+        fetch("example.md")
+            .then(response => response.text())
+            .then(text => {
+                document.getElementById("content").innerHTML = marked.parse(text);
+                 console.log("text:" + text)
+                document.querySelectorAll("pre.mermaid, pre>code.language-mermaid").forEach($el => {
+  // if the second selector got a hit, reference the parent <pre>
+  console.log($el)
+  if ($el.tagName === "CODE")
+    $el = $el.parentElement
+  // put the Mermaid contents in the expected <div class="mermaid">
+  // plus keep the original contents in a nice <details>
+  $el.outerHTML = `
+    <div class="mermaid">${$el.textContent}</div>  
+  `
+})
+
+mermaid.init();
+
+            });
+
+
+
+    </script>
+</body>
+</html>
